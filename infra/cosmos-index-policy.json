@@ -1,0 +1,12 @@
+{
+  "indexingMode": "consistent",
+  "automatic": true,
+  "includedPaths": [{ "path": "/*" }],
+  "excludedPaths": [{ "path": "/\"_etag\"/?" }],
+  "compositeIndexes": [
+    [
+      { "path": "/created_at", "order": "descending" },
+      { "path": "/id", "order": "descending" }
+    ]
+  ]
+}
