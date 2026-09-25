@@ -1,0 +1,7 @@
+
+# Local development only (excluded from publish by .funcignore).
+-r requirements.txt
+pytest==9.1.1
+httpx2==2.13.1
+uvicorn==0.54.0
+shellcheck-py==0.11.0.1
