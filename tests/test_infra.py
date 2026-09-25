@@ -63,3 +63,11 @@ def test_captured_az_output_is_always_tsv(script):
 def test_publish_runs_with_the_project_venv_python():
     publish = [line for line in _logical_lines("deploy.sh") if "functionapp publish" in line]
     assert publish and all('PATH="$ROOT/.venv/bin:$PATH"' in line for line in publish)
+
+
+def test_host_lookup_handles_the_flex_consumption_response_shape():
+    # az 2.90 returns Flex apps in raw ARM shape: the host is under properties.defaultHostName.
+    lookups = [line for line in _logical_lines("deploy.sh") if "defaultHostName" in line]
+    assert lookups
+    for line in lookups:
+        assert '"properties.defaultHostName || defaultHostName"' in line, line

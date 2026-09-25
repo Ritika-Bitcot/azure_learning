@@ -197,7 +197,7 @@ configure_and_publish() {
 
   log "Waiting for /api/health"
   local base attempt
-  base="https://$(az functionapp show -g "$RESOURCE_GROUP" -n "$FUNCTION_APP" --query defaultHostName -o tsv)"
+  base="https://$(az functionapp show -g "$RESOURCE_GROUP" -n "$FUNCTION_APP" --query "properties.defaultHostName || defaultHostName" -o tsv)"
   for attempt in $(seq 1 36); do
     if curl -fsS "$base/api/health" 2>/dev/null | grep -q '"database":"configured"'; then
       ok "healthy after ~$((attempt * 5))s"

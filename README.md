@@ -53,6 +53,8 @@ To try the whole API locally with an in-memory store instead:
 
 Prerequisites: `az login` done, `.venv` set up. All names and the region live in `infra/config.sh`.
 
+New to Azure? **[DEPLOY.md](DEPLOY.md)** walks through the same deploy by hand, one resource at a time, with a check after each step.
+
 ```bash
 ./infra/deploy.sh --check   # read-only preflight: nothing is created
 ./infra/deploy.sh           # preflight, confirm, provision, configure, publish
