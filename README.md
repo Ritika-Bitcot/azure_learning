@@ -1,9 +1,9 @@
 # Items API — FastAPI CRUD on Azure Functions + Cosmos DB
 
 A FastAPI CRUD API for **items**, running on **Azure Functions** (Flex Consumption, Python 3.11)
-and storing data in **Azure Cosmos DB for NoSQL** (free tier). Design: `../docs/superpowers/specs/2026-09-25-fastapi-crud-azure-design.md`.
+and storing data in **Azure Cosmos DB for NoSQL** (free tier).
 
-All commands below run from this folder (`fastapi-crud/`).
+All commands below run from the repository root.
 
 | Method | Path | Result |
 |---|---|---|

@@ -68,7 +68,8 @@ def test_whole_runtime_dependency_tree_is_pinned_to_the_tested_versions():
     assert _installed_runtime_tree(list(pins)) == pins
 
 
-def test_repo_gitignore_keeps_azurite_and_pytest_cache_entries_separate():
-    lines = (ROOT.parent / ".gitignore").read_text().splitlines()
-    assert "AzuriteConfig" in lines
-    assert ".pytest_cache/" in lines
+def test_gitignore_keeps_secrets_local_files_and_docs_out_of_git():
+    # This folder is the repository root, so it needs its own .gitignore.
+    lines = (ROOT / ".gitignore").read_text().splitlines()
+    for entry in ("local.settings.json", ".venv", "__pycache__/", ".pytest_cache/", "docs/", "AzuriteConfig"):
+        assert entry in lines, entry
