@@ -45,3 +45,21 @@ def test_config_uses_the_agreed_names_and_region():
 
 def test_deploy_never_lets_the_cli_create_its_own_app_insights():
     assert "--disable-app-insights" in (INFRA / "deploy.sh").read_text()
+
+
+def _logical_lines(script: str) -> list[str]:
+    return (INFRA / script).read_text().replace("\\\n", " ").splitlines()
+
+
+@pytest.mark.parametrize("script", ["deploy.sh", "teardown.sh", "config.sh"])
+def test_captured_az_output_is_always_tsv(script):
+    # A user's `az config set core.output=...` must not change what the scripts compare against.
+    captured = [line for line in _logical_lines(script) if "$(az " in line]
+    assert captured
+    for line in captured:
+        assert "-o tsv" in line, line
+
+
+def test_publish_runs_with_the_project_venv_python():
+    publish = [line for line in _logical_lines("deploy.sh") if "functionapp publish" in line]
+    assert publish and all('PATH="$ROOT/.venv/bin:$PATH"' in line for line in publish)

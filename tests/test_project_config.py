@@ -1,4 +1,6 @@
 import json
+import re
+from importlib import metadata
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -27,3 +29,46 @@ def test_runtime_dependencies_are_pinned():
         if line.strip() and not line.startswith("#")
     ]
     assert lines and all("==" in line for line in lines)
+
+
+def _normalise(name: str) -> str:
+    return re.sub(r"[-_.]+", "-", name).lower()
+
+
+def _pins() -> dict[str, str]:
+    pins = {}
+    for line in (ROOT / "requirements.txt").read_text().splitlines():
+        if line.strip() and not line.startswith("#"):
+            name, version = line.split("==")
+            pins[_normalise(name)] = version.strip()
+    return pins
+
+
+def _installed_runtime_tree(roots: list[str]) -> dict[str, str]:
+    """Every installed distribution reachable from the direct runtime deps."""
+    tree, todo = {}, list(roots)
+    while todo:
+        name = _normalise(todo.pop())
+        if name in tree:
+            continue
+        try:
+            dist = metadata.distribution(name)
+        except metadata.PackageNotFoundError:
+            continue  # requirement gated by a marker that does not apply here
+        tree[name] = dist.version
+        for requirement in dist.requires or []:
+            if "extra ==" not in requirement:
+                todo.append(re.match(r"[A-Za-z0-9._-]+", requirement).group(0))
+    return tree
+
+
+def test_whole_runtime_dependency_tree_is_pinned_to_the_tested_versions():
+    # The remote build on deploy day must install exactly what the tests ran against.
+    pins = _pins()
+    assert _installed_runtime_tree(list(pins)) == pins
+
+
+def test_repo_gitignore_keeps_azurite_and_pytest_cache_entries_separate():
+    lines = (ROOT.parent / ".gitignore").read_text().splitlines()
+    assert "AzuriteConfig" in lines
+    assert ".pytest_cache/" in lines

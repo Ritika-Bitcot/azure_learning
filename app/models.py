@@ -38,7 +38,8 @@ class ItemCreate(BaseModel):
 
     name: str = Field(min_length=1, max_length=100)
     description: str | None = Field(default=None, max_length=1000)
-    price: float = Field(ge=0, allow_inf_nan=False)
+    # strict: reject booleans and numeric strings; JSON integers are still accepted.
+    price: float = Field(ge=0, allow_inf_nan=False, strict=True)
 
 
 class ItemUpdate(BaseModel):
@@ -48,7 +49,7 @@ class ItemUpdate(BaseModel):
 
     name: str | None = Field(default=None, min_length=1, max_length=100)
     description: str | None = Field(default=None, max_length=1000)
-    price: float | None = Field(default=None, ge=0, allow_inf_nan=False)
+    price: float | None = Field(default=None, ge=0, allow_inf_nan=False, strict=True)
 
     @model_validator(mode="after")
     def check_fields(self) -> "ItemUpdate":

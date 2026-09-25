@@ -174,3 +174,17 @@ def test_unexpected_error_returns_generic_500(caplog):
     assert response.json() == {"detail": "Internal server error"}
     assert "secret" not in response.text
     assert "Unhandled error on GET /api/items" in caplog.text
+
+
+@pytest.mark.parametrize("price", [True, "3", "1.5"])
+def test_create_rejects_non_numeric_price(client, price):
+    assert client.post("/api/items", json={"name": "Pen", "price": price}).status_code == 422
+
+
+def test_create_accepts_integer_price(client):
+    assert client.post("/api/items", json={"name": "Pen", "price": 3}).json()["price"] == 3.0
+
+
+def test_patch_rejects_boolean_price(client):
+    created = _create(client)
+    assert client.patch(f"/api/items/{created['id']}", json={"price": True}).status_code == 422

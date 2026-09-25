@@ -86,7 +86,7 @@ preflight() {
   else die "Storage name $STORAGE_ACCOUNT is taken; change STORAGE_ACCOUNT in infra/config.sh (e.g. ${STORAGE_ACCOUNT}001)"
   fi
   if exists_in_rg Microsoft.DocumentDB/databaseAccounts "$COSMOS_ACCOUNT"; then ok "$COSMOS_ACCOUNT (already ours)"
-  elif [[ "$(az cosmosdb check-name-exists -n "$COSMOS_ACCOUNT")" == "false" ]]; then ok "$COSMOS_ACCOUNT available"
+  elif [[ "$(az cosmosdb check-name-exists -n "$COSMOS_ACCOUNT" -o tsv)" == "false" ]]; then ok "$COSMOS_ACCOUNT available"
   else die "Cosmos name $COSMOS_ACCOUNT is taken; change COSMOS_ACCOUNT in infra/config.sh (e.g. $COSMOS_ACCOUNT-001)"
   fi
   if exists_in_rg Microsoft.Web/sites "$FUNCTION_APP"; then ok "$FUNCTION_APP (already ours)"
@@ -192,7 +192,8 @@ configure_and_publish() {
   ok "COSMOS_*, APPLICATIONINSIGHTS_CONNECTION_STRING"
 
   log "Publish code (remote build)"
-  (cd "$ROOT" && func azure functionapp publish "$FUNCTION_APP" --python)
+  # Venv first on PATH so Core Tools sees the project's Python 3.11, not the system python3.
+  (cd "$ROOT" && PATH="$ROOT/.venv/bin:$PATH" func azure functionapp publish "$FUNCTION_APP" --python)
 
   log "Waiting for /api/health"
   local base attempt

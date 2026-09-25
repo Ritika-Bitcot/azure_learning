@@ -1,7 +1,34 @@
 # Runtime dependencies, deployed to Azure (remote build installs these).
+# The full tree is pinned to the versions the test suite ran against;
+# direct dependencies first, then transitive ones.
 azure-functions==1.25.0
 fastapi==0.141.1
 azure-cosmos==4.17.1
 aiohttp==3.14.3
 pydantic==2.13.5
 pydantic-settings==2.15.0
+
+# transitive
+aiohappyeyeballs==2.7.1
+aiosignal==1.4.0
+annotated-doc==0.0.5
+annotated-types==0.8.0
+anyio==4.15.1
+attrs==26.1.0
+azure-core==1.41.0
+certifi==2026.7.22
+charset-normalizer==3.5.1
+frozenlist==1.8.0
+idna==3.20
+markupsafe==3.0.3
+multidict==6.9.1
+propcache==0.5.4
+pydantic-core==2.46.5
+python-dotenv==1.2.3
+requests==2.34.2
+starlette==1.7.0
+typing-extensions==4.16.0
+typing-inspection==0.4.4
+urllib3==2.8.0
+werkzeug==3.1.8
+yarl==1.25.1

@@ -10,7 +10,7 @@ source "$ROOT/infra/config.sh"
 az account show >/dev/null 2>&1 || die "Not logged in. Run: az login"
 use_subscription
 
-if [[ "$(az group exists -n "$RESOURCE_GROUP")" != "true" ]]; then
+if [[ "$(az group exists -n "$RESOURCE_GROUP" -o tsv)" != "true" ]]; then
   echo "Resource group $RESOURCE_GROUP does not exist; nothing to delete."
   exit 0
 fi
